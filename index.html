@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给我的邱慧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            cursor: pointer;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+        .star {
+            position: fixed;
+            background: white;
+            border-radius: 50%;
+            animation: starTwinkle 2s infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes starTwinkle {
+            0% { opacity: 0.1; }
+            100% { opacity: 0.6; }
+        }
+        .sakura {
+            position: fixed;
+            top: -10px;
+            z-index: 0;
+            color: #ffb6c1;
+            font-size: 1rem;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            height: 40vh;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-radius: 0 0 12px 12px;
+            padding: 50px 30px 30px;
+            box-shadow: 0 10px 40px rgba(118, 75, 162, 0.3);
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        /* 信封封口 */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -35px;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background: rgba(255, 255, 255, 0.95);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: bottom center;
+            z-index: 12;
+            will-change: transform;
+        }
+        /* 封面文字 */
+        .cover-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #e74c3c;
+            font-weight: 600;
+            z-index: 13;
+            transition: opacity 0.5s ease 0.3s;
+        }
+        .container.open .cover-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .container.open::before {
+            transform: rotateX(120deg);
+            opacity: 0.3;
+        }
+        /* 火漆印 */
+        .container::after {
+            content: '❤️';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+            z-index: 11;
+        }
+        .text-content {
+            font-size: 18px;
+            line-height: 2.2;
+            color: #5a3d31;
+            text-align: left;
+            text-indent: 2em;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        .text-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+            font-style: italic;
+            color: #e96d7a;
+            font-weight: 500;
+            text-indent: 0;
+        }
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(to right, #ff9a9e, #fecfef);
+            transition: width 0.5s ease;
+        }
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff7675;
+            transform: rotate(45deg);
+            animation: float 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+        .heart::before, .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff7675;
+            border-radius: 50%;
+        }
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+        .heart::after {
+            top: 0;
+            left: -10px;
+        }
+        @keyframes float {
+            0% {
+                opacity: 1;
+                transform: rotate(45deg) translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: rotate(45deg) translateY(-100px) scale(0.8);
+            }
+        }
+        .hint {
+            margin-top: 30px;
+            color: #a07869;
+            font-size: 14px;
+            opacity: 0.7;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.3; }
+        }
+        .final-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+    <div class="container" id="container">
+        <div class="cover-text">致邱慧</div>
+        <div class="text-content" id="text"></div>
+        <div class="hint" id="hint">点击屏幕拆信 ❤️</div>
+    </div>
+    <div class="final-effect" id="final"></div>
+    <audio id="bgm" loop>
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // 樱花飘落效果
+        function createSakura() {
+            const sakura = document.createElement('div');
+            sakura.className = 'sakura';
+            sakura.innerText = '🌸';
+            sakura.style.left = Math.random() * window.innerWidth + 'px';
+            sakura.style.animationDuration = Math.random() * 3 + 2 + 's';
+            sakura.style.opacity = Math.random() * 0.6 + 0.4;
+            sakura.style.fontSize = Math.random() * 10 + 10 + 'px';
+            document.body.appendChild(sakura);
+            setTimeout(() => sakura.remove(), 5000);
+        }
+        setInterval(createSakura, 300);
+
+        // 随机星星效果
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * window.innerWidth + 'px';
+            star.style.top = Math.random() * window.innerHeight + 'px';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(star);
+        }
+        // 生成80颗完全随机的星星
+        for(let i=0; i<80; i++) createStar();
+
+        let bgmPlayed = false;
+        const contents = [
+            "又是新的一年，距离我们相识相恋已过两年，这两年，我们一起成长，一起度过困难，一起畅想未来。",
+            "两年过去，你比我初见你时更加美丽可爱，更加温柔体贴，善解人意，两年的感情沉淀已经让你已经是我生活中无法缺少的一部分。",
+            "我对你的爱意值，每一天都比昨天更多，会没有上限的一直涨下去。",
+            "生命何其短暂，生活的伴侣又何其重要，有你在我身边，我总会感到无比安心。咱们的交流也会带给我很多灵感。",
+            "人生中的困难， 只要有你在，我觉得都不算什么。",
+            "对不起，我做了很多让你生气伤心难过的事，但这些都不是我的本意，我以后会逐渐变得更好。",
+            "希望我们能一起走下去。",
+            "<div class='signature'>致 我的挚友恋人 邱慧</div>"
+        ];
+
+        let currentIndex = 0;
+        const textEl = document.getElementById('text');
+        const progressEl = document.getElementById('progress');
+        const hintEl = document.getElementById('hint');
+        const finalEl = document.getElementById('final');
+
+        function showCurrent() {
+            textEl.classList.remove('show');
+            setTimeout(() => {
+                textEl.innerHTML = contents[currentIndex];
+                textEl.classList.add('show');
+                progressEl.style.width = `${((currentIndex + 1) / contents.length) * 100}%`;
+                
+                if (currentIndex === contents.length - 1) {
+                    hintEl.textContent = "❤️ 我爱你 ❤️";
+                    createFinalHearts();
+                }
+            }, 300);
+        }
+
+        function createHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = `${x - 10}px`;
+            heart.style.top = `${y - 10}px`;
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1500);
+        }
+
+        function createFinalHearts() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createHeart(x, y);
+                }, i * 100);
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            createHeart(e.clientX, e.clientY);
+            const containerEl = document.getElementById('container');
+            
+            // 第一次点击播放背景音乐
+            if (!bgmPlayed) {
+                document.getElementById('bgm').play().catch(() => {});
+                bgmPlayed = true;
+            }
+
+            if (!window.envelopeOpened) {
+                // 拆信动画
+                containerEl.classList.add('open');
+                hintEl.textContent = "点击屏幕继续 ❤️";
+                setTimeout(() => {
+                    window.envelopeOpened = true;
+                    showCurrent();
+                }, 1000);
+                return;
+            }
+            
+            if (currentIndex < contents.length - 1) {
+                currentIndex++;
+                showCurrent();
+            }
+        });
+    </script>
+</body>
+</html>
